@@ -22,7 +22,7 @@ Include this dependency in your `pom.xml`:
 
 ```xml
 <dependency>
-  <groupId>com.roche.bfx.ctDNA</groupId>
+  <groupId>com.heekim.dev</groupId>
   <artifactId>python</artifactId>
   <version>3.5.3-5</version> <!-- For Ubuntu 18.04 -->
   <type>deb</type>
