@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>python</artifactId>
+  <version>3.5.3-7</version>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>com.heekim.dev<</groupId>
+    <artifactId>parent-pom</artifactId>
+    <version>1.1.0</version>
+  </parent>
+
+  <properties>
+    <skip.compile>false</skip.compile>
+    <skip.apt.repo>false</skip.apt.repo>
+    <PYTHON_VERSION>3.5.3</PYTHON_VERSION>
+  </properties>
+
+  <licenses>
+    <license>
+      <name>GPL compatible</name>
+      <url>https://docs.python.org/3.5/license.html</url>
+    </license>
+  </licenses>
+
+  <build>
+    <plugins>
+      <!-- wget download -->
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>1.3.0</version>
+        <executions>
+          <execution>
+            <id>download-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <skip>${skip.compile}</skip>
+              <url>https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz</url>
+              <outputDirectory>${project.build.directory}/checkout</outputDirectory>
+              <outputFileName>python.tar.xz</outputFileName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.5.0</version>
+        <executions>
+          <execution>
+            <id>compile-binaries</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <skip>${skip.compile}</skip>
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <executable>docker</executable>
+              <arguments>
+                <argument>run</argument>
+                <argument>--rm</argument>
+                <argument>-i</argument>
+                <argument>-e</argument>
+                <argument>PYTHON_VERSION=${project.version}</argument>
+                <argument>-v</argument>
+                <argument>${project.basedir}/build:/src</argument>
+                <argument>-v</argument>
+                <argument>${project.basedir}/target/checkout:/usr/src/python</argument>
+                <argument>-v</argument>
+                <argument>${project.basedir}/target/bin:/bfx/bin/${project.artifactId}/${project.version}</argument>
+                <argument>${docker.dev-base.name}</argument>
+                <argument>/src/build.sh</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
